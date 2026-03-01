@@ -1,17 +1,78 @@
 ---
+import { getCollection } from 'astro:content';
 
+// 1. Buscamos todos los artículos guardados por Keystatic
+const posts = await getCollection('posts');
+const title = "Salesforce Dev Blog";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <style>
+      :root {
+        --bone-white: #F9F8F6;
+        --text: #2C2C2C;
+        --accent: #00A1E0; /* Azul Salesforce */
+      }
+      body {
+        background-color: var(--bone-white);
+        color: var(--text);
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+      }
+      .container {
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        max-width: 1100px;
+        width: 100%;
+        gap: 60px;
+        padding: 80px 20px;
+      }
+      h1 { font-size: 3rem; letter-spacing: -2px; margin-bottom: 3rem; }
+      .post-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        padding: 20px 0;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      .post-link h2 { margin: 0 0 10px 0; font-size: 1.5rem; }
+      .tag { 
+        font-size: 0.7rem; 
+        text-transform: uppercase; 
+        background: #eee; 
+        padding: 4px 8px; 
+        border-radius: 3px; 
+      }
+      aside { border-left: 1px solid #ddd; padding-left: 30px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <main>
+        <h1>{title}</h1>
+        
+        {posts.length === 0 ? (
+          <p>Aún no hay artículos. ¡Ve al panel admin y crea el primero!</p>
+        ) : (
+          posts.map(post => (
+            <a href={`/posts/${post.slug}`} class="post-link">
+              <span class="tag">{post.data.category}</span>
+              <h2>{post.data.title}</h2>
+              <p>{post.data.date.toLocaleDateString()}</p>
+            </a>
+          ))
+        )}
+      </main>
+
+      <aside>
+        <h3 style="font-size: 0.8rem; color: #888;">RECOMENDADOS</h3>
+        <p>Pronto verás aquí los temas de CPQ más calientes.</p>
+      </aside>
+    </div>
+  </body>
 </html>
