@@ -1,7 +1,9 @@
 import { defineConfig } from 'astro/config';
 import keystatic from '@keystatic/astro';
 
+import react from '@astrojs/react';
+
 export default defineConfig({
-  integrations: [keystatic()],
-  output: 'hybrid', // Esto permite que el panel de admin funcione bien
+  integrations: [keystatic(), react()],
+  //output: 'hybrid', // Esto permite que el panel de admin funcione bien
 });
