@@ -1,0 +1,112 @@
+---
+import { ui } from "../i18n/ui";
+---
+
+<div class="toolbar">
+    <button id="themeToggle" class="icon-btn" aria-label="Cambiar tema">
+        <img
+            src="/mode/favicon-sun.png"
+            class="theme-icon sun-icon"
+            alt="Sol"
+        />
+        <img
+            src="/mode/favicon-moon.png"
+            class="theme-icon moon-icon"
+            alt="Luna"
+        />
+    </button>
+
+    <button id="langToggle" class="icon-btn" aria-label="Cambiar idioma">
+        <img src="/flags/spain.png" class="flag-icon flag-es" alt="Español" />
+        <img src="/flags/uk.png" class="flag-icon flag-en" alt="English" />
+    </button>
+</div>
+
+<style>
+    .toolbar {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .icon-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        transition: opacity 0.2s ease;
+    }
+
+    .icon-btn:hover {
+        opacity: 0.7;
+    }
+
+    /* Tamaño uniforme para todos los iconos de la toolbar */
+    .theme-icon,
+    .flag-icon {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+    }
+
+    /* --- LÓGICA DE VISIBILIDAD GLOBAL --- */
+    .sun-icon,
+    .moon-icon,
+    .flag-es,
+    .flag-en {
+        display: none;
+    }
+
+    /* TEMA: Escucha al atributo data-theme en <html> */
+    :global([data-theme="light"]) .sun-icon {
+        display: block;
+    }
+    :global([data-theme="dark"]) .moon-icon {
+        display: block;
+    }
+
+    /* IDIOMA: Escucha al atributo data-lang en <html> */
+    :global([data-lang="es"]) .flag-es {
+        display: block;
+    }
+    :global([data-lang="en"]) .flag-en {
+        display: block;
+    }
+</style>
+
+<script>
+    import { ui } from "../i18n/ui";
+
+    const updateTexts = (lang: "es" | "en") => {
+        document.querySelectorAll("[data-key]").forEach((el) => {
+            const key = el.getAttribute("data-key") as keyof (typeof ui)["es"];
+            if (ui[lang] && ui[lang][key]) {
+                (el as HTMLElement).innerText = ui[lang][key];
+            }
+        });
+    };
+
+    const root = document.documentElement;
+
+    // Inicializar textos al cargar
+    const currentLang = (root.getAttribute("data-lang") || "es") as "es" | "en";
+    updateTexts(currentLang);
+
+    // Toggle Tema
+    document.getElementById("themeToggle")?.addEventListener("click", () => {
+        const next =
+            root.getAttribute("data-theme") === "light" ? "dark" : "light";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+    });
+
+    // Toggle Idioma
+    document.getElementById("langToggle")?.addEventListener("click", () => {
+        const next = root.getAttribute("data-lang") === "es" ? "en" : "es";
+        root.setAttribute("data-lang", next);
+        localStorage.setItem("lang", next);
+        updateTexts(next as "es" | "en");
+    });
+</script>

@@ -1,85 +1,44 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Toolbar from "../components/Toolbar.astro";
+import { ui } from "../i18n/ui";
 
-// 1. LÓGICA: Buscamos los artículos en la base de datos de "content"
-const posts = await getCollection('posts');
-const title = "Salesforce Dev Blog";
+const posts = await getCollection("posts");
 ---
 
-<html lang="es">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
-</head>
-<body>
+<BaseLayout title="Quote to Cash">
     <div class="container">
         <main>
-            <h1>{title}</h1>
-            
-            {posts.length === 0 ? (
-                <p>Aún no hay artículos. Ve al panel admin para crear uno.</p>
-            ) : (
-                posts.map(post => (
-                    <a href={`/posts/${post.slug}`} class="post-card">
-                        <span class="tag">{post.data.category}</span>
-                        <h2>{post.data.title}</h2>
-                        <p>{post.data.date.toLocaleDateString()}</p>
-                    </a>
-                ))
-            )}
+            <h1 id="pageTitle" data-key="title">{ui.es.title}</h1>
+            <div class="feed">
+                {
+                    posts.map((post) => (
+                        <a href={`/posts/${post.slug}`} class="post-card">
+                            <span
+                                class="tag"
+                                style="color: var(--sf-blue); font-size: 0.7rem; font-weight: bold;"
+                            >
+                                {post.data.category}
+                            </span>
+                            <h2>{post.data.title}</h2>
+                            <p style="color: #888; font-size: 0.8rem;">
+                                {post.data.date.toLocaleDateString()}
+                            </p>
+                        </a>
+                    ))
+                }
+            </div>
         </main>
 
         <aside>
-            <h3 style="font-size: 0.8rem; color: #888;">RECOMENDADOS</h3>
-            <p>Próximamente guías de CPQ y Billing.</p>
+            <Toolbar />
+            <h3 data-key="recommended" style="font-size: 0.8rem; color: #888;">
+                {ui.es.recommended}
+            </h3>
+            <p data-key="sidebarDesc" style="font-size: 0.9rem;">
+                {ui.es.sidebarDesc}
+            </p>
         </aside>
     </div>
-
-    <style is:global>
-        :root {
-            /* El gris neutro de Apple */
-            --bg-color: #F5F5F7; 
-            --text-color: #1D1D1F;
-        }
-        
-        html, body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 280px;
-            max-width: 1100px;
-            margin: 0 auto;
-            gap: 60px;
-            padding: 80px 20px;
-        }
-
-        h1 { font-size: 3rem; letter-spacing: -2px; }
-
-        .post-card {
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-            padding: 20px 0;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .post-card h2 { margin: 10px 0; }
-
-        .tag { 
-            font-size: 0.7rem; 
-            text-transform: uppercase; 
-            background: rgba(0,0,0,0.05); 
-            padding: 4px 8px; 
-            border-radius: 3px; 
-        }
-
-        aside { border-left: 1px solid rgba(0,0,0,0.1); padding-left: 30px; }
-    </style>
-</body>
-</html>
+</BaseLayout>

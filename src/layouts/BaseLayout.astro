@@ -1,0 +1,153 @@
+---
+// Definimos las props para que cada página pueda tener su propio título
+const { title = "Quote to Cash" } = Astro.props;
+---
+
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>{title}</title>
+
+        <link
+            id="favicon"
+            rel="icon"
+            type="image/png"
+            href="/mode/favicon-sun.png"
+        />
+
+        <script is:inline>
+            // Lógica de persistencia ultra-rápida para evitar el "flash" blanco
+            const getStored = (key, fallback) =>
+                localStorage.getItem(key) || fallback;
+
+            const theme = getStored("theme", "light");
+            const lang = getStored("lang", "es");
+
+            // Aplicamos los atributos al HTML antes de que se pinte el body
+            document.documentElement.setAttribute("data-theme", theme);
+            document.documentElement.setAttribute("data-lang", lang);
+        </script>
+    </head>
+    <body>
+        <slot />
+
+        <style is:global>
+            /* 1. VARIABLES DE DISEÑO */
+            :root {
+                --bg-color: #f5f5f7; /* Apple Neutral */
+                --text-color: #181818; /* Tu color de letra elegido */
+                --sf-blue: #0176d3; /* Salesforce Standard Blue */
+                --border: rgba(0, 0, 0, 0.1);
+                --card-bg: #ffffff;
+            }
+
+            [data-theme="dark"] {
+                --bg-color: #1b2838; /* Steam Blue */
+                --text-color: #f5f5f7;
+                --border: rgba(255, 255, 255, 0.1);
+                --card-bg: rgba(255, 255, 255, 0.05);
+            }
+
+            /* 2. ESTILOS BASE (RESET & TIPOGRAFÍA) */
+            html,
+            body {
+                background-color: var(--bg-color);
+                color: var(--text-color);
+                margin: 0;
+                padding: 0;
+                /* Tipografía estilo Apple/Salesforce */
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    Helvetica, Arial, sans-serif;
+                transition:
+                    background-color 0.3s ease,
+                    color 0.3s ease;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            /* 3. LAYOUT DEL BLOG (Quote to Cash) */
+            .container {
+                display: grid;
+                grid-template-columns: 1fr 280px;
+                max-width: 1100px;
+                margin: 0 auto;
+                gap: 60px;
+                padding: 80px 20px;
+            }
+
+            h1 {
+                font-size: 3rem;
+                font-weight: 700;
+                letter-spacing: -2px;
+                margin-bottom: 3rem;
+            }
+
+            /* 4. COMPONENTES REUTILIZABLES (Estilo Card de Salesforce) */
+            .post-card {
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 24px;
+                margin-bottom: 20px;
+                text-decoration: none;
+                color: inherit;
+                display: block;
+                transition:
+                    transform 0.2s ease,
+                    border-color 0.2s ease,
+                    box-shadow 0.2s ease;
+            }
+
+            .post-card:hover {
+                border-color: var(--sf-blue);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+
+            .post-card h2 {
+                margin: 0 0 10px 0;
+                color: var(--sf-blue);
+                font-size: 1.6rem;
+            }
+
+            /* 5. SIDEBAR Y BOTONES */
+            aside {
+                border-left: 1px solid var(--border);
+                padding-left: 30px;
+            }
+
+            .icon-btn {
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                transition: opacity 0.2s;
+            }
+
+            .icon-btn:hover {
+                opacity: 0.7;
+            }
+
+            /* 6. RESPONSIVE (Para leer en el móvil) */
+            @media (max-width: 800px) {
+                .container {
+                    grid-template-columns: 1fr;
+                    padding: 40px 20px;
+                }
+                aside {
+                    border-left: none;
+                    padding-left: 0;
+                    border-top: 1px solid var(--border);
+                    padding-top: 40px;
+                    margin-top: 20px;
+                }
+                h1 {
+                    font-size: 2.2rem;
+                }
+            }
+        </style>
+    </body>
+</html>
