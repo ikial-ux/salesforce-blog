@@ -4,4 +4,38 @@ date: 2026-03-01
 language: es
 category: cpq
 ---
-Hoy
+Las **Price Rules** son herramientas de automatización que permiten actualizar campos en el presupuesto (Quote) o en sus líneas (Quote Lines) basándose en condiciones específicas. Son, esencialmente, el "cerebro" que decide cuánto cuesta realmente un producto bajo ciertas circunstancias.
+
+### 🧩 La Anatomía de una Regla
+
+Para configurar una regla efectiva, necesitamos entender sus tres pilares:
+
+1. **Price Rule Header**: Define el alcance (¿Calculadora o Configurador?) y cuándo debe dispararse la evaluación.
+1. **Price Conditions**: Los criterios de "si...". Por ejemplo: *¿La cantidad es mayor a 50?* o *¿El país es España?*
+1. **Price Actions**: El "entonces...". Aquí definimos qué campo actualizar y con qué valor (o fórmula).
+
+### ⏱️ El Ciclo de Evaluación (Evaluation Events)
+
+El orden de ejecución es sagrado en **Quote to Cash**. Puedes decidir en qué momento del cálculo entra tu lógica:
+
+- **On Init**: Se ejecuta antes de que empiece el cálculo inicial.
+- **On Calculate**: Ocurre durante el proceso de cálculo.
+- **After Calculate**: La última palabra; se ejecuta después de que todas las fórmulas estándar han terminado.
+
+> **💡 Pro Tip de Developer:** Si estás trabajando en implementaciones de **Billing**, ten mucho cuidado con las reglas en *After Calculate*, ya que pueden afectar los cálculos de impuestos y el reconocimiento de ingresos posteriores [cite: 2026-02-19].
+
+---
+
+### 📊 Lógica de Cálculo: Un ejemplo matemático
+
+Imagina que necesitas aplicar un recargo logístico dinámico basado en una variable de resumen. La fórmula lógica que veríamos en el sistema sería:
+
+$$PrecioFinal = ListPrice + (VariableResumen \times FactorRecargo)$$
+
+En lugar de codificar esto en Apex, una **Price Action** puede inyectar este resultado directamente en el campo `Customer Price`.
+
+### ✅ Mejores Prácticas
+
+- **Usa Variables de Resumen**: Son tus mejores amigas para evitar cálculos redundantes.
+- **Evita el "Hardcoding"**: Utiliza campos de configuración o metadatos para que tus reglas sean flexibles.
+- **Prueba en el Configurador**: Asegúrate de que el usuario vea el cambio de precio en tiempo real para reducir la fricción en la venta.
